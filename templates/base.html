@@ -1,0 +1,136 @@
+{% from "_macros.html" import avatar %}
+<!doctype html>
+<html lang="rw" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0C1612">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Amazu">
+<link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='brand/apple-touch-icon.png') }}">
+<meta name="color-scheme" content="dark light">
+<title>{% block title %}Amazu - amazu yo gukodesha mu Rwanda{% endblock %}</title>
+<script>
+/* Hitamo ibara mbere y'uko paji igaragara (nta guhindagurika). Umwijima ni wo usanzwe. */
+(function(){document.documentElement.classList.add('js');setTimeout(function(){if(!window.__fx)document.documentElement.classList.add('nofx')},4000);var t='dark';try{var s=localStorage.getItem('theme');if(s==='light'||s==='dark')t=s}catch(e){}document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='light'?'#F3F6F2':'#0C1612'})();
+</script>
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='brand/favicon.svg') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-page="{{ request.endpoint or '' }}" data-name="{{ me.name.split()[0] if me and me.name else '' }}" data-role="{{ me.role if me else '' }}">
+<a class="skip" href="#main">Simbuka ujye ku bikubiyemo</a>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="{{ url_for('index') }}" aria-label="Amazu, ahabanza">
+      <img class="logo-ondark" src="{{ url_for('static', filename='brand/logo-light.svg') }}" alt="" height="36">
+      <img class="logo-onlight" src="{{ url_for('static', filename='brand/logo.svg') }}" alt="Amazu" height="36">
+      <img class="logo-mark" src="{{ url_for('static', filename='brand/logo-mark.svg') }}" alt="" height="34">
+    </a>
+    <nav aria-label="Menu nkuru">
+      <a class="nl" href="{{ url_for('map_page') }}" aria-label="Ikarita y'amazu">{{ icon('map', 20) }}<span class="t">Ikarita</span></a>
+      {% if me %}
+        {% if me.role == 'admin' %}<a class="nl" href="{{ url_for('admin') }}" aria-label="Admin">{{ icon('user', 20) }}<span class="t">Admin</span></a>{% endif %}
+        {% if me.role == 'owner' %}<a class="nl" href="{{ url_for('owner_dashboard') }}" aria-label="Amazu yanjye">{{ icon('home', 20) }}<span class="t">Amazu yanjye</span></a>{% endif %}
+        {% if me.role != 'admin' %}
+        <a class="nl" href="{{ url_for('chats') }}" aria-label="Ubutumwa">{{ icon('chat', 20) }}<span class="t">Ubutumwa</span><span class="badge" data-unread="{{ unread }}" {{ 'hidden' if not unread }}>{{ '99+' if unread > 99 else unread }}</span></a>
+        {% endif %}
+        <a class="me" href="{{ url_for('account') }}" title="Konti yanjye">{{ avatar(me.name, me.avatar) }}<span class="me-name">{{ me.name }}</span></a>
+      {% else %}
+        <a class="nl" href="{{ url_for('login') }}">Injira</a>
+      {% endif %}
+      <button type="button" class="theme-btn" id="theme" aria-label="Hindura ibara">
+        <span class="i-sun">{{ icon('sun', 20) }}</span><span class="i-moon">{{ icon('moon', 20) }}</span>
+      </button>
+      {% if me %}
+        <form method="post" action="{{ url_for('logout') }}" class="inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="nl" aria-label="Sohoka">{{ icon('logout', 20) }}<span class="t">Sohoka</span></button>
+        </form>
+      {% else %}
+        <a class="btn btn-sm" href="{{ url_for('register') }}">Fungura konti</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+{% block hero %}{% endblock %}
+
+<main id="main" class="wrap {% block mainclass %}{% endblock %}">
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}<div class="flashes">
+      {% for cat, m in msgs %}<div class="flash {{ cat }}" role="status">{{ m }}</div>{% endfor %}
+    </div>{% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="foot">
+  <div class="band" aria-hidden="true"></div>
+  <div class="wrap foot-in">
+    <div>
+      <img src="{{ url_for('static', filename='brand/logo-light.svg') }}" alt="Amazu" height="34">
+      <p>Shaka inzu yo gukodesha mu mugi wawe, uvugane na nyirinzu ako kanya.</p>
+    </div>
+    <nav aria-label="Aho kujya">
+      <a href="{{ url_for('index') }}">Ahabanza</a>
+      <a href="{{ url_for('map_page') }}">Ikarita y'amazu</a>
+      {% if not me %}<a href="{{ url_for('login') }}">Injira</a><a href="{{ url_for('register') }}">Fungura konti</a>{% endif %}
+      <button type="button" class="kaze-on" id="kaze-on" hidden>Garura Kaze, umufasha</button>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var b=document.getElementById('theme'); if(!b) return;
+  function label(){var d=document.documentElement.dataset.theme==='dark';b.setAttribute('aria-label',d?'Hindura ku mucyo':'Hindura mu mwijima');b.title=b.getAttribute('aria-label')}
+  label();
+  b.addEventListener('click',function(){
+    var n=document.documentElement.dataset.theme==='dark'?'light':'dark';
+    document.documentElement.dataset.theme=n;
+    try{localStorage.setItem('theme',n)}catch(e){}
+    var m=document.querySelector('meta[name=theme-color]');if(m)m.content=n==='light'?'#F3F6F2':'#0C1612';
+    label();
+  });
+})();
+</script>
+{% if me and me.role != 'admin' %}
+<script>
+/* Ubutumwa bushya: ibarura rigaruka buri masegonda 8 */
+(function(){
+  var badges=document.querySelectorAll('[data-unread]'); if(!badges.length) return;
+  var last=parseInt(badges[0].dataset.unread,10)||0, base=document.title.replace(/^\(\d+\+?\)\s/,'');
+  function paint(n){badges.forEach(function(b){b.hidden=!n;b.textContent=n>99?'99+':n});document.title=(n?'('+n+') ':'')+base}
+  function toast(){
+    if(document.querySelector('.toast')) return;
+    var t=document.createElement('div'); t.className='toast'; t.setAttribute('role','status');
+    var s=document.createElement('span'); s.textContent='Ufite ubutumwa bushya.';
+    var a=document.createElement('a'); a.className='btn btn-sm btn-sun'; a.href='{{ url_for("chats") }}'; a.textContent='Reba';
+    t.append(s,a); document.body.appendChild(t); setTimeout(function(){t.remove()},7000);
+  }
+  function tick(){
+    fetch('{{ url_for("api_unread") }}',{cache:'no-store',credentials:'same-origin'})
+      .then(function(r){return r.ok?r.json():null})
+      .then(function(j){
+        if(!j||typeof j.count!=='number') return;
+        if(j.count>last && location.pathname.indexOf('/chat/')!==0) toast();
+        last=j.count; paint(last);
+      }).catch(function(){});
+  }
+  paint(last); setInterval(tick,8000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden) tick()});
+})();
+</script>
+{% endif %}
+{% block after %}{% endblock %}
+{% include "_kaze.html" %}
+<script src="{{ url_for('static', filename='js/fx.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/kaze.js') }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

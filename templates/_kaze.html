@@ -1,0 +1,47 @@
+<aside class="kaze" id="kaze" role="complementary" aria-label="Kaze, umufasha wawe" hidden>
+  <div class="kbub" id="kbub" role="status" aria-live="polite" hidden>
+    <button type="button" class="kvoice" id="kvoice" aria-pressed="true" aria-label="Ijwi rya Kaze: rirakoze. Kanda urizimye." hidden>
+      <span class="v-on">{{ icon('volume', 18) }}</span><span class="v-off">{{ icon('mute', 18) }}</span>
+    </button>
+    <button type="button" class="kx" id="kclose" aria-label="Funga ubutumwa">&times;</button>
+    <p class="ktext" id="ktext"></p>
+    <p class="knote" id="knote" hidden></p>
+    <div class="kreplies" id="kreplies"></div>
+    <button type="button" class="koff" id="koff">Ntukongere kunyereka</button>
+  </div>
+  <button type="button" class="kchar" id="kchar" aria-label="Kaze: kanda umwumve">
+    <svg viewBox="0 0 130 142" width="100%" height="100%" aria-hidden="true" focusable="false">
+      <ellipse cx="62" cy="139" rx="40" ry="4" fill="rgba(0,0,0,.28)"/>
+      <!-- ukuboko k'ibumoso -->
+      <path d="M31 106C20 118 21 130 27 140" fill="none" stroke="#1F5D45" stroke-width="13" stroke-linecap="round"/>
+      <!-- umubiri -->
+      <path d="M18 142C18 112 34 98 62 98S106 112 106 142Z" fill="#1F5D45"/>
+      <path d="M49 99 62 121 75 99Z" fill="#F6EBD3"/>
+      <path d="M62 121 49 99M62 121 75 99" stroke="#174836" stroke-width="2" fill="none"/>
+      <g class="k-badge"><circle cx="85" cy="119" r="8.5" fill="#F5B800"/><path d="M80.5 120 85 115.6l4.5 4.4M82 119.2V124h6v-4.8" fill="none" stroke="#12261E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+      <!-- ijosi -->
+      <rect x="54" y="84" width="16" height="18" rx="6" fill="#7A4E33"/>
+      <!-- ukuboko kuramutsa -->
+      <g class="k-arm">
+        <path d="M94 108C108 102 112 90 111 76" fill="none" stroke="#1F5D45" stroke-width="13" stroke-linecap="round"/>
+        <circle cx="111" cy="70" r="8" fill="#8D5B3E"/>
+        <g fill="none" stroke="#F5B800" stroke-width="2.6" stroke-linecap="round"><circle cx="119" cy="62" r="4"/><path d="M116 65 111 70M113.6 67.4 115.6 69.4"/></g>
+      </g>
+      <!-- umutwe -->
+      <g class="k-head">
+        <circle cx="35" cy="62" r="5.5" fill="#8D5B3E"/><circle cx="89" cy="62" r="5.5" fill="#8D5B3E"/>
+        <ellipse cx="62" cy="60" rx="27" ry="29" fill="#8D5B3E"/>
+        <path d="M34 55C32 32 46 23 62 23S90 33 89 55C82 44 72 40 62 40S42 44 34 55Z" fill="#1B1411"/>
+        <path d="M43 50Q49 46 55 49M69 49Q75 46 81 50" fill="none" stroke="#1B1411" stroke-width="2.6" stroke-linecap="round"/>
+        <ellipse cx="51" cy="60" rx="6.6" ry="7.6" fill="#fff"/><ellipse cx="73" cy="60" rx="6.6" ry="7.6" fill="#fff"/>
+        <g id="kpup"><circle class="pl" cx="51" cy="61" r="3.7" fill="#1B1411"/><circle class="pr" cx="73" cy="61" r="3.7" fill="#1B1411"/></g>
+        <ellipse class="k-lid" cx="51" cy="60" rx="7" ry="8" fill="#8D5B3E"/><ellipse class="k-lid" cx="73" cy="60" rx="7" ry="8" fill="#8D5B3E"/>
+        <circle cx="42" cy="73" r="5" fill="#F08C79" opacity=".28"/><circle cx="82" cy="73" r="5" fill="#F08C79" opacity=".28"/>
+        <path d="M60 66q2 5-1 7" fill="none" stroke="#6E452D" stroke-width="2" stroke-linecap="round"/>
+        <path class="k-smile" d="M52 77Q62 86 72 77" fill="none" stroke="#3A1F14" stroke-width="2.8" stroke-linecap="round"/>
+        <g class="k-talk"><ellipse cx="62" cy="80" rx="7" ry="5" fill="#3A1F14"/><ellipse cx="62" cy="82.4" rx="4" ry="2.2" fill="#E27C6D"/></g>
+      </g>
+    </svg>
+    <span class="kdot" id="kdot" hidden>?</span>
+  </button>
+</aside>

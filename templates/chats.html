@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar %}
+{% block title %}Ubutumwa - Amazu{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Ubutumwa bwanjye</h1></div>
+{% if rows %}
+<div class="rows">
+  {% for r in rows %}
+  <a class="crow {{ 'unread' if r.unread }}" href="{{ url_for('chat', cid=r.id) }}">
+    {{ avatar(r.other_name, r.other_avatar) }}
+    <div class="ltext">
+      <strong>{{ r.other_name }}</strong>
+      <span class="muted">{{ r.title }}</span>
+      <span class="snippet">{% if r.last_kind == 'image' %}{{ icon('image', 14) }} {{ r.last_body[:70] if r.last_body else 'Ifoto' }}{% elif r.last_kind == 'audio' %}{{ icon('mic', 14) }} Ubutumwa bw'ijwi{% elif r.last_kind == 'file' %}{{ icon('file', 14) }} {{ r.last_body[:70] if r.last_body else 'Dosiye' }}{% else %}{{ (r.last_body or 'Nta butumwa buhari')[:90] }}{% endif %}</span>
+    </div>
+    {% if r.unread %}<span class="badge" aria-label="Ubutumwa {{ r.unread }} butarasomwa">{{ r.unread }}</span>{% endif %}
+    <time class="muted">{{ r.last_at or '' }}</time>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  {{ icon('chat', 34) }}
+  <h3>Nta butumwa ufite</h3>
+  <p>Fungura inzu hanyuma ukande "Vugana na nyirinzu muri chat" utangire ikiganiro.</p>
+  <div class="row"><a class="btn" href="{{ url_for('index') }}">Shaka inzu</a></div>
+</div>
+{% endif %}
+{% endblock %}

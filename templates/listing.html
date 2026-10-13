@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar %}
+{% block title %}{{ l.title }} - {{ l.city_name }} - Amazu{% endblock %}
+{% block content %}
+<a class="back dark" href="{{ url_for('city', cid=l.city_id) }}">{{ icon('back', 16) }} Amazu i {{ l.city_name }}</a>
+<div class="detail">
+  <div class="gallery">
+    {% if photos %}
+      <img id="big" class="big" src="{{ url_for('uploads', name=photos[0].filename) }}" alt="{{ l.title }}">
+      {% if photos|length > 1 %}
+      <div class="thumbs">
+        {% for p in photos %}
+          <button type="button" class="th {{ 'on' if loop.first }}" aria-label="Ifoto {{ loop.index }}"
+                  onclick="document.getElementById('big').src='{{ url_for('uploads', name=p.filename) }}';document.querySelectorAll('.th').forEach(b=>b.classList.remove('on'));this.classList.add('on')">
+            <img src="{{ url_for('uploads', name=p.filename) }}" alt="">
+          </button>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="big noimg">{{ icon('image', 38) }}<span>Nta foto yashyizweho</span></div>
+    {% endif %}
+    {% if l.description %}
+    <section class="about"><h2>Ibisobanuro</h2><p>{{ l.description }}</p></section>
+    {% endif %}
+    {% if l.lat is not none and l.lng is not none %}
+    <section class="about">
+      <h2>Aho iri</h2>
+      <div id="dmap" class="dmap" data-lat="{{ l.lat }}" data-lng="{{ l.lng }}" aria-label="Ikarita y'aho inzu iri"></div>
+      <a class="dirs" href="https://www.google.com/maps/dir/?api=1&destination={{ l.lat }},{{ l.lng }}" target="_blank" rel="noopener">{{ icon('map', 18) }} Reba inzira muri Google Maps</a>
+    </section>
+    {% endif %}
+  </div>
+
+  <aside class="panel">
+    {% if l.status == 'rented' %}<span class="pill pill-off">Yarakodeshejwe</span>{% endif %}
+    <div class="bigprice">{{ l.price|rwf }}<small> /ukwezi</small></div>
+    <h1>{{ l.title }}</h1>
+    <ul class="facts">
+      <li>{{ icon('pin') }}<span>{{ l.location }}, {{ l.city_name }}</span></li>
+      <li>{{ icon('bed') }}<span>{{ l.bedrooms }} {{ 'icyumba' if l.bedrooms == 1 else 'ibyumba' }}</span></li>
+      <li class="owner-line">{{ avatar(l.owner_name, l.owner_avatar) }}<span>Nyirinzu: {{ l.owner_name }}</span></li>
+      <li>{{ icon('phone') }}<a href="tel:{{ l.phone }}"><strong>{{ l.phone }}</strong></a></li>
+    </ul>
+
+    {% if me.id == l.owner_id %}
+      <a class="btn full" href="{{ url_for('listing_edit', lid=l.id) }}">{{ icon('edit') }} Hindura iyi nzu</a>
+    {% elif me.role == 'admin' %}
+      <p class="muted">Winjiye nka admin.</p>
+    {% else %}
+      <a class="btn btn-sun full" href="tel:{{ l.phone }}">{{ icon('phone') }} Hamagara nyirinzu</a>
+      <form method="post" action="{{ url_for('chat_start', lid=l.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn full">{{ icon('chat') }} Vugana na nyirinzu muri chat</button>
+      </form>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+{% if l.lat is not none and l.lng is not none %}
+<script src="{{ url_for('static', filename='js/amazumap.js') }}"></script>
+<script src="{{ url_for('static', filename='js/detail-map.js') }}"></script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Amazu yo gukodesha i {{ city.name }} - Amazu{% endblock %}
+{% block mainclass %}home{% endblock %}
+{% set filtered = q or max_price or beds %}
+{% block hero %}
+<section class="cityhead">
+  <div class="wrap">
+    <a class="back" href="{{ url_for('index') }}">{{ icon('back', 16) }} Imigi yose</a>
+    <h1>{{ city.name }}</h1>
+    <p>{{ items|length }} {{ 'inzu' if items|length == 1 else 'amazu' }}
+      {{ "ahuje n'ibyo washakishije" if filtered else 'ahari yo gukodesha' }}</p>
+  </div>
+</section>
+{% endblock %}
+{% block content %}
+<form class="finder slim" method="get">
+  <label>Agace
+    <input name="q" value="{{ q }}" placeholder="Urugero: Nyamirambo">
+  </label>
+  <label>Igiciro ntarengwa (RWF)
+    <input name="max_price" type="number" min="0" step="1000" value="{{ max_price }}">
+  </label>
+  <label>Ibyumba
+    <select name="bedrooms">
+      <option value="">Ibyo ari byo byose</option>
+      {% for n in [1,2,3,4] %}<option value="{{ n }}" {{ 'selected' if beds == n }}>{{ n }} no kuzamura</option>{% endfor %}
+    </select>
+  </label>
+  <button class="btn">{{ icon('search') }} Shakisha</button>
+</form>
+
+{% if items %}
+<div class="lgrid sec">{% for l in items %}{% include "_card.html" %}{% endfor %}</div>
+{% else %}
+<div class="empty">
+  {{ icon('home', 34) }}
+  <h3>Nta nzu ibonetse</h3>
+  <p>{{ 'Gerageza guhindura ibyo washakishije, cyangwa urebe indi mugi.' if filtered else 'Nta nzu iraboneka i ' ~ city.name ~ ' ubu. Ongera ugerageze nyuma, cyangwa urebe indi mugi.' }}</p>
+  <div class="row">
+    {% if filtered %}<a class="btn" href="{{ url_for('city', cid=city.id) }}">Siba ibyo washakishije</a>{% endif %}
+    <a class="btn btn-ghost" href="{{ url_for('index') }}">Reba imigi yose</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

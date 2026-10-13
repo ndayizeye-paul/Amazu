@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar %}
+{% block title %}Admin - Amazu{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Admin</h1></div>
+<div class="stats">
+  <div><b>{{ stats.users }}</b><span>Abakoresha</span></div>
+  <div><b>{{ stats.owners }}</b><span>Banyirinzu</span></div>
+  <div><b>{{ stats.listings }}</b><span>Amazu yose</span></div>
+  <div><b>{{ stats.available }}</b><span>Amazu ahari</span></div>
+  <div><b>{{ stats.chats }}</b><span>Ibiganiro</span></div>
+</div>
+
+<section class="sec" id="cities">
+  <div class="sec-head"><h2>Imigi</h2></div>
+  <form method="post" action="{{ url_for('admin_city_add') }}" class="inline-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="name" placeholder="Izina ry'umugi mushya" aria-label="Izina ry'umugi mushya" required>
+    <button class="btn">{{ icon('plus') }} Ongeraho umugi</button>
+  </form>
+  <div class="rows">
+    {% for c in cities %}
+    <div class="arow">
+      <div class="ltext"><strong>{{ c.name }}</strong><span class="muted">Amazu {{ c.n }}</span></div>
+      <form method="post" action="{{ url_for('admin_city_delete', cid=c.id) }}" class="inline"
+            onsubmit="return confirm('Siba umugi {{ c.name }}?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-danger">Siba</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="sec" id="users">
+  <div class="sec-head"><h2>Abakoresha</h2></div>
+  <div class="rows">
+    {% for u in users %}
+    <div class="arow">
+      {{ avatar(u.name, u.avatar) }}
+      <div class="ltext">
+        <strong>{{ u.name }}</strong>
+        <span class="muted">{{ u.email }}, {{ u.phone }}</span>
+      </div>
+      <span class="pill">{{ 'Nyirinzu' if u.role == 'owner' else 'Ushaka inzu' }}</span>
+      {% if not u.active %}<span class="pill pill-off">Yahagaritswe</span>{% endif %}
+      <form method="post" action="{{ url_for('admin_user_toggle', uid=u.id) }}" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm {{ 'btn-danger' if u.active else 'btn-ghost' }}">{{ 'Hagarika' if u.active else 'Garura' }}</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="arow muted">Nta bakoresha baraboneka.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="sec" id="listings">
+  <div class="sec-head"><h2>Amazu yose</h2></div>
+  <div class="rows">
+    {% for l in listings %}
+    <div class="arow">
+      <div class="ltext">
+        <a href="{{ url_for('listing', lid=l.id) }}"><strong>{{ l.title }}</strong></a>
+        <span class="muted">{{ l.city_name }}, {{ l.price|rwf }}, nyirinzu: {{ l.owner_name }}</span>
+      </div>
+      <span class="pill {{ 'pill-ok' if l.status == 'available' else 'pill-off' }}">{{ 'Irahari' if l.status == 'available' else 'Yarakodeshejwe' }}</span>
+      <form method="post" action="{{ url_for('listing_delete', lid=l.id) }}" class="inline"
+            onsubmit="return confirm('Siba iyi nzu burundu?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-danger">Siba</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="arow muted">Nta nzu zirashyirwaho.</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

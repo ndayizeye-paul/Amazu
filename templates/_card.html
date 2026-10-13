@@ -1,0 +1,16 @@
+<a class="lcard" href="{{ url_for('listing', lid=l.id) }}">
+  <div class="lphoto">
+    {% if l.cover %}<img src="{{ url_for('uploads', name=l.cover) }}" alt="{{ l.title }}" loading="lazy">
+    {% else %}<div class="noimg">{{ icon('home', 30) }}<span>Nta foto</span></div>{% endif %}
+    <span class="lprice">{{ l.price|rwf }}<small> /ukwezi</small></span>
+    {% if l.status == 'rented' %}<span class="stamp">Yarakodeshejwe</span>
+    {% elif not me %}<span class="lock">{{ icon('lock', 14) }} Injira urebe byose</span>{% endif %}
+  </div>
+  <div class="lbody">
+    <h3>{{ l.title }}</h3>
+    <p class="lmeta">
+      <span>{{ icon('pin', 16) }}{{ l.location }}, {{ l.city_name }}</span>
+      <span>{{ icon('bed', 16) }}{{ l.bedrooms }} {{ 'icyumba' if l.bedrooms == 1 else 'ibyumba' }}</span>
+    </p>
+  </div>
+</a>

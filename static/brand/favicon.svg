@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Amazu">
+<rect width="64" height="64" rx="17" fill="#1F5D45"/>
+<path d="M11 31.5 32 13l21 18.5" fill="none" stroke="#fff" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.5 29.5V50h29V29.5" fill="none" stroke="#fff" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="32" cy="35.2" r="4.6" fill="#F5B800"/>
+<path d="M29.6 38.6h4.8l2.3 9.4h-9.4z" fill="#F5B800"/>
+</svg>

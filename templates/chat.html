@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar %}
+{% block title %}Ikiganiro na {{ other.name }} - Amazu{% endblock %}
+{% block content %}
+<a class="back dark" href="{{ url_for('chats') }}">{{ icon('back', 16) }} Ubutumwa bwose</a>
+<div class="chatbox" id="chatbox" data-cid="{{ c.id }}" data-csrf="{{ csrf_token() }}">
+  <div class="chat-head">
+    {{ avatar(other.name, other.avatar) }}
+    <div class="ltext">
+      <strong>{{ other.name }}</strong>
+      <a href="{{ url_for('listing', lid=l.id) }}">{{ l.title }}, {{ l.price|rwf }}</a>
+    </div>
+  </div>
+  <div id="msgs" class="msgs" aria-live="polite"></div>
+  <p id="cerr" class="chat-err" role="alert" hidden></p>
+  <div id="pending" class="pending" hidden></div>
+  <div id="rec" class="rec" hidden>
+    <span class="rec-dot" aria-hidden="true"></span>
+    <span id="rectime" class="rec-time" role="timer" aria-label="Igihe cyo gufata ijwi">0:00</span>
+    <span class="rec-hint">Turafata ijwi ryawe...</span>
+    <button type="button" class="ibtn danger" id="recCancel" aria-label="Siba ijwi">{{ icon('trash', 20) }}</button>
+    <button type="button" class="btn" id="recSend">{{ icon('send', 18) }} Ohereza</button>
+  </div>
+  <form id="form" class="chat-form" autocomplete="off">
+    <div class="attach-wrap">
+      <button type="button" class="ibtn" id="attachBtn" aria-label="Ongeraho ifoto cyangwa dosiye" aria-haspopup="true" aria-expanded="false">{{ icon('clip', 22) }}</button>
+      <div class="attach-menu" id="attachMenu" role="menu" hidden>
+        <button type="button" role="menuitem" data-pick="image">{{ icon('image', 20) }} Ifoto</button>
+        <button type="button" role="menuitem" data-pick="file">{{ icon('file', 20) }} Dosiye</button>
+      </div>
+    </div>
+    <input id="body" maxlength="2000" placeholder="Andika ubutumwa..." aria-label="Ubutumwa">
+    <button type="button" class="ibtn mic" id="micBtn" aria-label="Fata ijwi (voice note)" hidden>{{ icon('mic', 22) }}</button>
+    <button class="btn" id="sendBtn" hidden>{{ icon('send', 18) }}<span class="sr-hide-m"> Ohereza</span></button>
+  </form>
+  <input type="file" id="imgIn" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+  <input type="file" id="fileIn" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv" hidden>
+</div>
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Ifoto nini" hidden>
+  <img id="lbimg" alt="">
+  <a id="lbdl" class="btn btn-sm btn-sun" href="#" download>{{ icon('download', 18) }} Yikuremo</a>
+  <button type="button" id="lbclose" class="lb-x" aria-label="Funga">{{ icon('x', 22) }}</button>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/chat.js') }}"></script>{% endblock %}

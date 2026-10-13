@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "_macros.html" import avatar %}
+{% block title %}Konti yanjye - Amazu{% endblock %}
+{% block content %}
+<div class="narrow">
+  <div class="profile">
+    {{ avatar(me.name, me.avatar, 'lg') }}
+    <div>
+      <h1>{{ me.name }}</h1>
+      <p class="muted">{{ me.email }}{% if me.phone and me.phone != '-' %}, {{ me.phone }}{% endif %}</p>
+      <span class="pill">{{ {'owner': 'Nyirinzu', 'renter': 'Ushaka inzu', 'admin': 'Admin'}[me.role] }}</span>
+    </div>
+  </div>
+
+  <section class="box">
+    <h2>Ifoto ya profile</h2>
+    <div class="avatar-edit">
+      <form method="post" action="{{ url_for('avatar_upload') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input id="avatar-file" type="file" name="avatar" accept="image/*" required aria-label="Hitamo ifoto ya profile">
+        <button class="btn">{{ icon('camera') }} Bika ifoto</button>
+      </form>
+      {% if me.avatar %}
+      <form method="post" action="{{ url_for('avatar_remove') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-ghost">Siba ifoto</button>
+      </form>
+      {% endif %}
+    </div>
+    <p class="hint">Ifoto igaragara kuri konti yawe, mu biganiro no ku mazu yawe. Koresha jpg, png cyangwa webp.</p>
+  </section>
+
+  <section class="box">
+    <h2>Hindura ijambo ry'ibanga</h2>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Ijambo risanzwe <input name="old" type="password" autocomplete="current-password" required></label>
+      <label>Ijambo rishya <input name="new" type="password" minlength="6" autocomplete="new-password" required></label>
+      <button class="btn">Bika ijambo rishya</button>
+    </form>
+  </section>
+</div>
+<script>
+document.getElementById('avatar-file').addEventListener('change', function (e) {
+  var f = e.target.files[0], av = document.querySelector('.profile .avatar');
+  if (!f || !av) return;
+  av.textContent = ''; var i = new Image(); i.alt = ''; i.src = URL.createObjectURL(f); av.appendChild(i);
+});
+</script>
+{% endblock %}

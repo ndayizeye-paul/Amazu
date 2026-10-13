@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Amazu ari hafi yawe - Amazu{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Amazu ari hafi yawe</h1>
+    <p id="status" class="muted" role="status">Turimo gushaka amazu...</p>
+  </div>
+  <button type="button" id="locate" class="btn btn-sun">{{ icon('locate') }} Shaka hafi yanjye</button>
+</div>
+<div class="mapwrap">
+  <div id="map" data-api="{{ url_for('api_listings') }}" data-logged="{{ 1 if me else 0 }}"
+       data-near="{{ 1 if request.args.get('near') else 0 }}" aria-label="Ikarita y'amazu"></div>
+  <aside id="list" class="maplist" aria-label="Urutonde rw'amazu"></aside>
+</div>
+{% if not me %}
+<p class="maphint">{{ icon('lock', 16) }} Utarinjira, aho amazu ari herekanwa hafi gusa.
+  <a href="{{ url_for('login', next=url_for('map_page')) }}">Injira</a> urebe neza aho ari.</p>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/amazumap.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nearby.js') }}"></script>
+{% endblock %}

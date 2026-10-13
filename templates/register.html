@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Fungura konti - Amazu{% endblock %}
+{% block content %}
+<div class="auth">
+  {% with heading="Tangira ubu", points=["Shaka inzu mu mugi wawe mu minota mike", "Shyiraho amazu yawe n'amafoto yayo", "Vugana n'abashaka inzu muri chat"] %}{% include "_authart.html" %}{% endwith %}
+  <section class="auth-form">
+    <h1>Fungura konti</h1>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <fieldset class="roles">
+        <legend>Ndi</legend>
+        <label class="role">
+          <input type="radio" name="role" value="renter" {{ 'checked' if form.get('role', 'renter') == 'renter' }}>
+          <span>{{ icon('search', 22) }}<b>Ushaka inzu</b><small>Reba amazu, uvugane na banyirayo</small></span>
+        </label>
+        <label class="role">
+          <input type="radio" name="role" value="owner" {{ 'checked' if form.get('role') == 'owner' }}>
+          <span>{{ icon('home', 22) }}<b>Nyirinzu</b><small>Shyiraho amazu yawe yo gukodesha</small></span>
+        </label>
+      </fieldset>
+      <label>Amazina yawe <input name="name" value="{{ form.get('name','') }}" autocomplete="name" required></label>
+      <label>Email <input name="email" type="email" value="{{ form.get('email','') }}" autocomplete="email" required></label>
+      <label>Telefoni <input name="phone" type="tel" value="{{ form.get('phone','') }}" placeholder="07XXXXXXXX" autocomplete="tel" required></label>
+      <label>Ijambo ry'ibanga <small class="muted">(nibura inyuguti 6)</small>
+        <input name="password" type="password" minlength="6" autocomplete="new-password" required></label>
+      <button class="btn full">Fungura konti</button>
+    </form>
+    <p class="alt">Usanzwe ufite konti? <a href="{{ url_for('login', next=request.args.get('next')) }}">Injira</a></p>
+  </section>
+</div>
+{% endblock %}

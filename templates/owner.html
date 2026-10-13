@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Amazu yanjye - Amazu{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Amazu yanjye</h1>
+    <p class="muted">{{ items|length }} {{ 'inzu' if items|length == 1 else 'amazu' }} yashyizweho</p>
+  </div>
+  <a class="btn btn-sun" href="{{ url_for('listing_new') }}">{{ icon('plus') }} Shyiraho inzu nshya</a>
+</div>
+
+{% if items %}
+<div class="rows">
+  {% for l in items %}
+  <article class="lrow">
+    <a class="lthumb" href="{{ url_for('listing', lid=l.id) }}">
+      {% if l.cover %}<img src="{{ url_for('uploads', name=l.cover) }}" alt="">{% else %}{{ icon('image', 24) }}{% endif %}
+    </a>
+    <div class="ltext">
+      <a href="{{ url_for('listing', lid=l.id) }}"><strong>{{ l.title }}</strong></a>
+      <span class="muted">{{ l.location }}, {{ l.city_name }}</span>
+      <span class="price-s">{{ l.price|rwf }} /ukwezi</span>
+    </div>
+    <span class="pill {{ 'pill-ok' if l.status == 'available' else 'pill-off' }}">{{ 'Irahari' if l.status == 'available' else 'Yarakodeshejwe' }}</span>
+    <div class="acts">
+      <a class="btn btn-sm btn-ghost" href="{{ url_for('listing_edit', lid=l.id) }}">Hindura</a>
+      <form method="post" action="{{ url_for('listing_status', lid=l.id) }}" class="inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-ghost">{{ 'Yarakodeshejwe' if l.status == 'available' else 'Garura ihari' }}</button>
+      </form>
+      <form method="post" action="{{ url_for('listing_delete', lid=l.id) }}" class="inline"
+            onsubmit="return confirm('Wiyemeje ko ushaka gusiba iyi nzu?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-danger">Siba</button>
+      </form>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  {{ icon('home', 34) }}
+  <h3>Nta nzu uragira ushyiraho</h3>
+  <p>Shyiraho inzu yawe ya mbere n'amafoto, abashaka inzu bayibone.</p>
+  <div class="row"><a class="btn btn-sun" href="{{ url_for('listing_new') }}">{{ icon('plus') }} Shyiraho inzu</a></div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Hindura inzu' if l else 'Shyiraho inzu' }} - Amazu{% endblock %}
+{% block content %}
+<div class="narrow wide">
+  <a class="back dark" href="{{ url_for('owner_dashboard') }}">{{ icon('back', 16) }} Amazu yanjye</a>
+  <h1>{{ 'Hindura inzu' if l else 'Shyiraho inzu nshya' }}</h1>
+  <form method="post" enctype="multipart/form-data" class="box">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Umutwe w'inzu
+      <input name="title" value="{{ form['title'] or '' }}" placeholder="Urugero: Apartment y'ibyumba 2 ifite parking" required>
+    </label>
+    <div class="two">
+      <label>Umugi
+        <select name="city_id" required>
+          {% for c in cities %}<option value="{{ c.id }}" {{ 'selected' if form['city_id']|string == c.id|string }}>{{ c.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Aho iherereye
+        <input name="location" value="{{ form['location'] or '' }}" placeholder="Urugero: Kimironko, hafi ya Gare" required>
+      </label>
+    </div>
+    <div class="two">
+      <label>Igiciro ku kwezi (RWF)
+        <input name="price" type="number" min="1" value="{{ form['price'] or '' }}" required>
+      </label>
+      <label>Ibyumba byo kuraramo
+        <input name="bedrooms" type="number" min="0" value="{{ form['bedrooms'] if form['bedrooms'] is not none else 1 }}" required>
+      </label>
+    </div>
+    <label>Telefoni abantu bazahamagaraho
+      <input name="phone" type="tel" value="{{ form['phone'] or '' }}" required>
+    </label>
+    <label>Ibisobanuro
+      <textarea name="description" rows="5" placeholder="Amazi, umuriro, umutekano, ibikoresho, amasezerano...">{{ form['description'] or '' }}</textarea>
+    </label>
+
+    <p class="lbl">Aho inzu iri ku ikarita</p>
+    <p class="muted">Kanda ku ikarita kugira ngo ifungurwe nini, hanyuma uyiyobore ku nzu yawe. Ibi bituma igaragara ku ikarita y'abashaka amazu ari hafi yabo.</p>
+    <div class="pick-wrap">
+      <div id="pick" aria-hidden="true"></div>
+      <button type="button" id="pickopen" class="pick-open" aria-haspopup="dialog" aria-label="Fungura ikarita nini kugira ngo uhitemo aho inzu iri">
+        <span class="pick-cta">{{ icon('expand', 18) }} <span id="pickcta">Kanda ushyireho aho inzu iri</span></span>
+      </button>
+    </div>
+    <input type="hidden" id="lat" name="lat" value="{{ form['lat'] or '' }}">
+    <input type="hidden" id="lng" name="lng" value="{{ form['lng'] or '' }}">
+    <div class="pickbar">
+      <button type="button" id="pickhere" class="btn btn-sm btn-ghost">{{ icon('locate') }} Koresha aho ndi ubu</button>
+      <button type="button" id="pickclear" class="btn btn-sm btn-ghost" hidden>Siba aho nahisemo</button>
+      <span id="pickstat" role="status">Nta hantu uhitamo. Inzu ntizagaragara ku ikarita.</span>
+    </div>
+
+    {% if photos %}
+    <p class="lbl">Amafoto asanzweho</p>
+    <div class="photo-edit">
+      {% for p in photos %}
+        <div class="ph">
+          <img src="{{ url_for('uploads', name=p.filename) }}" alt="">
+          <button type="submit" class="x" aria-label="Siba iyi foto" formaction="{{ url_for('photo_delete', pid=p.id) }}"
+                  formnovalidate onclick="return confirm('Siba iyi foto?')">&times;</button>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <p class="lbl">Ongeraho amafoto</p>
+    <label class="drop" for="photos">
+      {{ icon('image', 28) }}
+      <b>Kanda ahano uhitemo amafoto</b>
+      <small>jpg, png cyangwa webp, agera kuri 8 kuri buri nzu</small>
+      <input id="photos" name="photos" type="file" accept="image/*" multiple>
+    </label>
+    <div id="preview" class="photo-edit"></div>
+
+    <button class="btn btn-sun full">{{ 'Bika impinduka' if l else 'Shyiraho inzu' }}</button>
+  </form>
+</div>
+<script>
+document.getElementById('photos').addEventListener('change', e => {
+  const box = document.getElementById('preview'); box.textContent = '';
+  for (const f of [...e.target.files].slice(0, 8)) {
+    const d = document.createElement('div'); d.className = 'ph';
+    const i = document.createElement('img'); i.src = URL.createObjectURL(f); i.alt = '';
+    d.appendChild(i); box.appendChild(d);
+  }
+});
+</script>
+{% endblock %}
+{% block after %}
+<div id="pm" class="pm" role="dialog" aria-modal="true" aria-labelledby="pmtitle" hidden>
+  <div class="pm-top">
+    <button type="button" id="pmclose" class="ibtn" aria-label="Funga ikarita">{{ icon('x', 22) }}</button>
+    <h2 id="pmtitle">Hitamo aho inzu iri neza</h2>
+  </div>
+  <form id="pmsearch" class="pm-search" role="search" autocomplete="off">
+    <input type="search" id="pmq" placeholder="Shakisha agace cyangwa umuhanda, urugero: Nyamirambo" aria-label="Shakisha ahantu ku ikarita" maxlength="120">
+    <button class="btn btn-sm">{{ icon('search', 18) }}<span class="sr-hide-m"> Shakisha</span></button>
+  </form>
+  <ul id="pmres" class="pm-res" hidden></ul>
+  <div class="pm-mapwrap">
+    <div id="pmmap" aria-label="Ikarita nini yo guhitamo aho inzu iri"></div>
+    <div class="pm-pin" id="pmpin" aria-hidden="true">
+      <svg width="54" height="68" viewBox="0 0 54 68"><ellipse class="pm-sh" cx="27" cy="63" rx="9" ry="3.2" fill="rgba(0,0,0,.35)"/><path d="M27 62C27 62 6 40 6 25a21 21 0 0 1 42 0c0 15-21 37-21 37z" fill="#1F5D45" stroke="#fff" stroke-width="3"/><path d="M16.5 26 27 17l10.5 9v10h-21z" fill="#fff"/><rect x="24" y="28" width="6" height="8" rx="1" fill="#F5B800"/></svg>
+    </div>
+    <div class="pm-dot" aria-hidden="true"></div>
+    <div class="pm-ctl">
+      <button type="button" id="pmsat" class="pm-chip" aria-pressed="false">{{ icon('layers', 18) }} <span>Satellite</span></button>
+      <button type="button" id="pmlocate" class="pm-chip">{{ icon('locate', 18) }} <span>Aho ndi</span></button>
+    </div>
+    <p class="pm-hint" id="pmhint" role="status"></p>
+  </div>
+  <div class="pm-bar">
+    <div class="pm-coords"><strong id="pmcoords">—</strong><small id="pmzoom"></small></div>
+    <button type="button" id="pmok" class="btn btn-sun">{{ icon('check', 18) }} Emeza aha hantu</button>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/amazumap.js') }}"></script>
+<script src="{{ url_for('static', filename='js/picker.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Amazu - shaka inzu yo gukodesha mu mugi wawe{% endblock %}
+{% block mainclass %}home{% endblock %}
+{% block hero %}
+<section class="hero hero-3d">
+  {% include "_hills.html" %}
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <h1>Shaka inzu ikubereye mu mugi wawe</h1>
+      <p class="lead">Reba amafoto, igiciro n'aho iherereye, hanyuma uvugane na nyirinzu ako kanya.</p>
+    </div>
+    {% include "_house3d.html" %}
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<form class="finder reveal" action="{{ url_for('go') }}" method="get">
+  <label>Umugi
+    <select name="city" required>
+      <option value="" disabled selected>Hitamo umugi</option>
+      {% for c in cities %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Igiciro ntarengwa (RWF)
+    <input type="number" name="max_price" min="0" step="1000" placeholder="Urugero: 150000">
+  </label>
+  <label>Ibyumba
+    <select name="bedrooms">
+      <option value="">Ibyo ari byo byose</option>
+      {% for n in [1,2,3,4] %}<option value="{{ n }}">{{ n }} no kuzamura</option>{% endfor %}
+    </select>
+  </label>
+  <button class="btn btn-sun">{{ icon('search') }} Shakisha amazu</button>
+  <a class="near" href="{{ url_for('map_page', near=1) }}">{{ icon('locate') }} Cyangwa shaka amazu ari hafi yawe ku ikarita</a>
+</form>
+
+<section class="sec reveal">
+  <div class="sec-head">
+    <h2>Hitamo umugi</h2>
+    <p class="muted">Amazu {{ total }} ahari ubu mu migi {{ cities|length }}.</p>
+  </div>
+  <div class="chips">
+    {% for c in cities %}
+      <a class="chip {{ 'zero' if c.n == 0 }}" href="{{ url_for('city', cid=c.id) }}">
+        <span>{{ c.name }}</span><b>{{ c.n }}</b>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+{% if latest %}
+<section class="sec reveal">
+  <div class="sec-head"><h2>Amazu aheruka gushyirwaho</h2></div>
+  <div class="lgrid">{% for l in latest %}{% include "_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+<section class="sec reveal">
+  <div class="sec-head"><h2>Uko bikora</h2></div>
+  <ol class="steps">
+    <li><span class="n">1</span><div><h3>Hitamo umugi</h3><p>Reba amazu ahari mu mugi wawe, ushakishe ku gace n'igiciro.</p></div></li>
+    <li><span class="n">2</span><div><h3>Reba inzu</h3><p>Fungura inzu urebe amafoto yose, aho iherereye n'ibisobanuro.</p></div></li>
+    <li><span class="n">3</span><div><h3>Vugana na nyirinzu</h3><p>Mwandikirane muri chat cyangwa umuhamagare kuri telefoni.</p></div></li>
+  </ol>
+</section>
+
+{% if not me or me.role == 'renter' %}
+<section class="cta reveal">
+  <div>
+    <h2>Ufite inzu yo gukodesha?</h2>
+    <p>Fungura konti ya nyirinzu, ushyireho inzu yawe n'amafoto, abantu bayibone.</p>
+  </div>
+  <a class="btn btn-sun" href="{{ url_for('register') }}">Fungura konti ya nyirinzu</a>
+</section>
+{% endif %}
+{% endblock %}

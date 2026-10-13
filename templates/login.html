@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Injira - Amazu{% endblock %}
+{% block content %}
+<div class="auth">
+  {% with heading="Garuka muri konti yawe", points=["Reba amafoto yose n'aho amazu ari", "Vugana na banyirinzu ako kanya", "Hindura amazu yawe niba uri nyirinzu"] %}{% include "_authart.html" %}{% endwith %}
+  <section class="auth-form">
+    <h1>Injira</h1>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Email <input name="email" type="email" autocomplete="email" required autofocus></label>
+      <label>Ijambo ry'ibanga <input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="btn full">Injira</button>
+    </form>
+    <p class="alt">Nta konti ufite? <a href="{{ url_for('register', next=request.args.get('next')) }}">Fungura konti</a></p>
+  </section>
+</div>
+{% endblock %}
